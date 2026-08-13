@@ -1,0 +1,3070 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anushka Freight Carriers - Executive Dashboard (Chandrapur)</title>
+    <style>
+        * { box-sizing: border-box; font-family: Tahoma, Arial, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #ece9d8; padding: 10px; color: #000; }
+
+        .win-form {
+            background: #ece9d8;
+            border: 2px solid #0055ea;
+            border-radius: 4px 4px 0 0;
+            max-width: 1150px;
+            margin: 0 auto;
+            box-shadow: 4px 4px 12px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .win-titlebar {
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: white;
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .win-controls span {
+            background: #ece9d8;
+            color: black;
+            padding: 0 6px;
+            margin-left: 2px;
+            font-weight: bold;
+            border: 1px solid #fff;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .win-body { padding: 15px; }
+
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .login-box {
+            background: #ece9d8;
+            border: 2px solid #0055ea;
+            width: 380px;
+            box-shadow: 4px 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .metric-card {
+            background: #fff;
+            border: 1px solid #7f9db9;
+            padding: 10px;
+            text-align: center;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        .metric-title {
+            font-size: 10px;
+            color: #666;
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .metric-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #000080;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 15px;
+            align-items: start;
+        }
+
+        .win-fieldset {
+            border: 1px dotted #666;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #ece9d8;
+        }
+        .win-legend {
+            font-size: 11px;
+            color: #000;
+            padding: 0 4px;
+            font-weight: bold;
+        }
+
+        .quick-links-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .win-link-btn {
+            border: 1px solid #000;
+            padding: 6px 10px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #e1dfc7;
+            text-decoration: none;
+            color: #000;
+            text-align: center;
+            display: block;
+        }
+        .win-link-btn:hover, .win-link-btn.active {
+            background: #ffff99;
+            border-color: #0055ea;
+        }
+
+        .workspace-panel { display: none; }
+        .workspace-panel.active { display: block; }
+
+        .center-form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .form-grid-centered {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .form-row label {
+            width: 110px;
+            font-size: 10px;
+        }
+        .form-row input[type="text"], .form-row input[type="password"], .form-row input[type="number"], .form-row input[type="date"], .form-row input[type="file"], .form-row select {
+            flex: 1;
+            padding: 3px 6px;
+            border: 1px solid #7f9db9;
+            background: #fff;
+            font-size: 10px;
+        }
+        
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 110px;
+            right: 0;
+            border: 1px solid #7f9db9;
+            background: #fff;
+            z-index: 999;
+            max-height: 120px;
+            overflow-y: auto;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            display: none;
+        }
+        .autocomplete-suggestion {
+            padding: 4px 6px;
+            font-size: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .autocomplete-suggestion:hover {
+            background: #0055ea;
+            color: #fff;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 10px;
+        }
+        .action-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+            width: 100%;
+        }
+        .btn-save {
+            border: 1px solid #000;
+            padding: 4px 25px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #00ffff;
+        }
+        .btn-reset {
+            border: 1px solid #000;
+            padding: 4px 25px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #ffc0cb;
+        }
+        .btn-edit {
+            border: 1px solid #000;
+            padding: 3px 15px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #ffff00;
+            margin-right: 5px;
+        }
+        .btn-delete {
+            border: 1px solid #000;
+            padding: 3px 15px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #ffc0cb;
+        }
+        .db-actions { margin-bottom: 6px; }
+
+        .data-table-container {
+            max-height: 160px;
+            overflow-y: auto;
+            border: 1px solid #7f9db9;
+            background: #fff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+        th, td {
+            border: 1px solid #d3d3d3;
+            padding: 5px 6px;
+            text-align: center;
+        }
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        td.text-left { text-align: left; }
+        td.amount { text-align: right; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<!-- Login Form Overlay -->
+<div id="login-overlay">
+    <div class="login-box">
+        <div class="win-titlebar">
+            <span>Anushka Freight Carriers - Security Login</span>
+            <div class="win-controls"><span>_</span><span>□</span><span>×</span></div>
+        </div>
+        <div class="win-body">
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <fieldset class="win-fieldset">
+                    <legend class="win-legend">Authentication Required</legend>
+                    <div class="form-row" style="margin-bottom: 12px;">
+                        <label style="width: 90px;">Username:</label>
+                        <input type="text" id="loginUser" value="RAMESH KUMAR" required>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 12px;">
+                        <label style="width: 90px;">Password:</label>
+                        <input type="password" id="loginPass" placeholder="Enter Password..." required>
+                    </div>
+                    <div id="loginError" style="color: red; font-size: 10px; text-align: center; margin-bottom: 8px; display: none;">Invalid credentials! Please try again.</div>
+                    <div class="action-row">
+                        <button type="submit" class="btn-save">Login</button>
+                        <button type="button" class="btn-reset" onclick="document.getElementById('loginForm').reset()">Reset</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Main Dashboard Container -->
+<div class="win-form" id="mainDashboard">
+    <div class="win-titlebar">
+        <span>Anushka Freight Carriers - Executive Dashboard (Chandrapur)</span>
+        <div class="win-controls"><span>_</span><span>□</span><span>×</span></div>
+    </div>
+
+    <div class="win-body">
+        
+        <!-- Summary Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-title">Total Staff</div>
+                <div class="metric-value" id="lblStaffCount">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Active Fleet</div>
+                <div class="metric-value" id="lblFleetCount">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Total Freight Logged</div>
+                <div class="metric-value" id="lblTotalFreight">₹0.00</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Total Expenses</div>
+                <div class="metric-value" id="lblTotalExpenses">₹0.00</div>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="dashboard-layout">
+            
+            <!-- Left Sidebar Quick Links -->
+            <fieldset class="win-fieldset">
+                <legend class="win-legend">Quick Operations Links</legend>
+                <div class="quick-links-panel">
+                    <a href="#" class="win-link-btn active" id="lnk_staff" onclick="switchModule('staff', event)">Staff Entry Form</a>
+                    <a href="#" class="win-link-btn" id="lnk_client" onclick="switchModule('client', event)">Client / Party Master</a>
+                    <a href="#" class="win-link-btn" id="lnk_vehicle" onclick="switchModule('vehicle', event)">Vehicle Master</a>
+                    <a href="#" class="win-link-btn" id="lnk_trip" onclick="switchModule('trip', event)">Trip & Freight Log</a>
+                    <a href="#" class="win-link-btn" id="lnk_gst_inv" onclick="switchModule('gst_inv', event)">GST Inv Entry Module</a>
+                    <a href="#" class="win-link-btn" id="lnk_pay_receipt" onclick="switchModule('pay_receipt', event)">Receive Payment Receipt</a>
+                    <a href="#" class="win-link-btn" id="lnk_party_ledger" onclick="switchModule('party_ledger', event)">Party Payment Ledger</a>
+                    <a href="#" class="win-link-btn" id="lnk_clear_outstanding" onclick="switchModule('clear_outstanding', event)">Clear & Pending Outstanding</a>
+                    <a href="#" class="win-link-btn" id="lnk_voucher" onclick="switchModule('voucher', event)">Vouchers / Expenses</a>
+                    <a href="#" class="win-link-btn" id="lnk_voucher_dc" onclick="switchModule('voucher_dc', event)">Debit / Credit Vouchers</a>
+                    <a href="#" class="win-link-btn" id="lnk_attendance" onclick="switchModule('attendance', event)">Daily Attendance</a>
+                    <a href="#" class="win-link-btn" id="lnk_salary" onclick="switchModule('salary', event)">Salary Pay Sheet</a>
+                    <a href="#" class="win-link-btn" id="lnk_daybook" onclick="switchModule('daybook', event)">Day Book (HDFC/SBI)</a>
+                    <a href="#" class="win-link-btn" id="lnk_statement" onclick="switchModule('statement', event)">Bank Statement Upload</a>
+                    <a href="#" class="win-link-btn" id="lnk_brs" onclick="switchModule('brs', event)">Bank Recon (BRS)</a>
+                    <a href="#" class="win-link-btn" id="lnk_audit" onclick="switchModule('audit', event)">Audit Reports & Summary</a>
+                    <a href="#" class="win-link-btn" id="lnk_backup" onclick="switchModule('backup', event)">Auto Backup & Restore</a>
+                </div>
+            </fieldset>
+
+            <!-- Right Workspace Section -->
+            <div>
+                
+                <!-- 1. STAFF MODULE -->
+                <div id="module_staff" class="workspace-panel active">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Staff Entry Form</legend>
+                        <div class="center-form-container">
+                            <form id="empForm" onsubmit="saveEmployee(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Emp ID</label>
+                                            <input type="text" id="empId" readonly style="background: #e0e0e0; font-weight: bold;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Emp Name</label>
+                                            <input type="text" id="empName" placeholder="Enter Name..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Gender</label>
+                                            <div class="radio-group">
+                                                <label><input type="radio" name="gender" value="Male" checked> Male</label>
+                                                <label><input type="radio" name="gender" value="Female"> Female</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Designation</label>
+                                            <select id="designation">
+                                                <option value="Senior Driver">Senior Driver</option>
+                                                <option value="Fleet Manager">Fleet Manager</option>
+                                                <option value="Operations Head">Operations Head</option>
+                                                <option value="Accountant">Accountant</option>
+                                                <option value="Office Clerk">Office Clerk</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Department</label>
+                                            <select id="department">
+                                                <option value="Management">Management</option>
+                                                <option value="HR / Office">HR / Office</option>
+                                                <option value="Logistics">Logistics</option>
+                                                <option value="Accounts">Accounts</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>City</label>
+                                            <input type="text" id="city" value="CHANDRAPUR" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Country</label>
+                                            <input type="text" id="country" value="India" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Save</button>
+                                    <button type="button" class="btn-reset" onclick="resetForm('empForm')">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Employee Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editStaff()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteStaff()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Emp ID</th>
+                                        <th>Name</th>
+                                        <th>Gender</th>
+                                        <th>Designation</th>
+                                        <th>Dept</th>
+                                        <th>City</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_staff"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 1.5 CLIENT / PARTY MASTER MODULE -->
+                <div id="module_client" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Client / Party Creation Form</legend>
+                        <div class="center-form-container">
+                            <form id="clientForm" onsubmit="saveClient(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Party ID</label>
+                                            <input type="text" id="clientId" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Party / Client Name</label>
+                                            <input type="text" id="clientName" placeholder="Awarpur Cement Works" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>GSTIN</label>
+                                            <input type="text" id="clientGstin" placeholder="27AAAAA0000A1Z5" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>PAN Number</label>
+                                            <input type="text" id="clientPan" placeholder="AAAAA0000A">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Contact Person</label>
+                                            <input type="text" id="clientContactPerson" placeholder="Mr. Manager">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Mobile Number</label>
+                                            <input type="text" id="clientPhone" placeholder="9876543210">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Billing Address</label>
+                                            <input type="text" id="clientAddress" placeholder="Industrial Area, Chandrapur">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>City</label>
+                                            <input type="text" id="clientCity" value="CHANDRAPUR" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Credit Period</label>
+                                            <select id="clientCreditDays">
+                                                <option value="Immediate">Immediate / Advance</option>
+                                                <option value="15 Days">15 Days</option>
+                                                <option value="30 Days" selected>30 Days</option>
+                                                <option value="45 Days">45 Days</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Credit Limit (₹)</label>
+                                            <input type="number" id="clientCreditLimit" placeholder="500000" value="500000">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Save Client Party</button>
+                                    <button type="button" class="btn-reset" onclick="resetClientForm()">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Client / Party Master Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editClient()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteClient()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Party ID</th>
+                                        <th>Party Name</th>
+                                        <th>GSTIN</th>
+                                        <th>Contact Person</th>
+                                        <th>Mobile</th>
+                                        <th>City</th>
+                                        <th>Credit Terms</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_client"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 2. VEHICLE MASTER MODULE -->
+                <div id="module_vehicle" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Vehicle Master Entry</legend>
+                        <div class="center-form-container">
+                            <form id="vehForm" onsubmit="saveVehicle(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Vehicle No.</label>
+                                            <input type="text" id="vNo" placeholder="MH-34-AB-0000" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Vehicle Type</label>
+                                            <select id="vType">
+                                                <option value="40 MT Trailer">40 MT Trailer</option>
+                                                <option value="LCV/PICKUP">3 MT LCV/PICKUP</option>
+                                                <option value="Heavy Truck">Heavy Truck</option>
+                                                <option value="Container">Container</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Capacity (MT)</label>
+                                            <input type="number" id="vCap" value="40" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Chassis No.</label>
+                                            <input type="text" id="vChassis" placeholder="Enter Chassis No..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Engine No.</label>
+                                            <input type="text" id="vEngine" placeholder="Enter Engine No..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Owner Name</label>
+                                            <input type="text" id="vOwnerName" placeholder="Enter Owner Name..." required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Owner Address</label>
+                                            <input type="text" id="vOwnerAddress" placeholder="Enter Owner Address..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Owner Contact</label>
+                                            <input type="text" id="vOwnerContact" placeholder="Owner Phone No..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>PAN / ID No.</label>
+                                            <input type="text" id="vOwnerIdNo" placeholder="PAN or ID No..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Driver Name</label>
+                                            <input type="text" id="vDriverName" placeholder="Enter Driver Name..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Driver DL No.</label>
+                                            <input type="text" id="vDriverDl" placeholder="DL Number..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Driver Addr & Cont</label>
+                                            <input type="text" id="vDriverInfo" placeholder="Address & Contact No..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Broker Name & Cont</label>
+                                            <input type="text" id="vBrokerInfo" placeholder="Broker Name & Contact No...">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Status</label>
+                                            <select id="vStatus">
+                                                <option value="Active">Active</option>
+                                                <option value="On Trip">On Trip</option>
+                                                <option value="Maintenance">Maintenance</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Save Vehicle</button>
+                                    <button type="button" class="btn-reset" onclick="document.getElementById('vehForm').reset()">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Vehicle Fleet Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editVehicle()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteVehicle()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Vehicle No.</th>
+                                        <th>Type</th>
+                                        <th>Capacity</th>
+                                        <th>Chassis / Engine</th>
+                                        <th>Owner & Contact</th>
+                                        <th>Driver & DL</th>
+                                        <th>Broker</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_vehicle"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 3. TRIP & FREIGHT LOG MODULE (Updated with Autocomplete & Fields) -->
+                <div id="module_trip" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Trip & Freight Log Entry</legend>
+                        <div class="center-form-container">
+                            <form id="tripForm" onsubmit="saveTrip(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Trip ID</label>
+                                            <input type="text" id="tId" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Date</label>
+                                            <input type="date" id="tDate" required>
+                                        </div>
+                                        <div class="form-row" style="position: relative;">
+                                            <label>Vehicle No.</label>
+                                            <input type="text" id="tVeh" placeholder="Type 5+ letters..." oninput="handleVehicleAutocomplete(this.value)" autocomplete="off" required>
+                                            <div id="vehAutocompleteList" class="autocomplete-suggestions"></div>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Route / Site</label>
+                                            <input type="text" id="tRoute" placeholder="Nagpur to Chandrapur" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Material</label>
+                                            <input type="text" id="tMaterial" placeholder="HT Motor / Machinery" required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row" style="position: relative;">
+                                            <label>Client</label>
+                                            <input type="text" id="tClient" placeholder="Type 5+ letters..." oninput="handleTripClientAutocomplete(this.value)" autocomplete="off" required>
+                                            <div id="tripClientAutocompleteList" class="autocomplete-suggestions"></div>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Freight Amt (₹)</label>
+                                            <input type="number" id="tFreight" placeholder="50000" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Advance (₹)</label>
+                                            <input type="number" id="tAdvance" placeholder="10000" value="0" oninput="calculateTripBalance()" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Balance (₹)</label>
+                                            <input type="text" id="tBalance" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Log Trip</button>
+                                    <button type="button" class="btn-reset" onclick="resetTripForm()">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Trip & Freight Logs Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editTrip()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteTrip()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Trip ID</th>
+                                        <th>Date</th>
+                                        <th>Vehicle</th>
+                                        <th>Route</th>
+                                        <th>Material</th>
+                                        <th>Client</th>
+                                        <th>Freight (₹)</th>
+                                        <th>Advance (₹)</th>
+                                        <th>Balance (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_trip"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 3.5 GST INVOICE ENTRY MODULE (Modified for Manual Invoice Number Entry) -->
+                <div id="module_gst_inv" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">GST Invoice Entry Module</legend>
+                        <div class="center-form-container">
+                            <form id="gstInvForm" onsubmit="saveGstInvoice(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Invoice No.</label>
+                                            <input type="text" id="gstInvNo" placeholder="Enter Invoice No. manually..." required style="font-weight:bold; background:#fff;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Invoice Date</label>
+                                            <input type="date" id="gstInvDate" required>
+                                        </div>
+                                        <div class="form-row" style="position: relative;">
+                                            <label>Client / Party</label>
+                                            <input type="text" id="gstClient" placeholder="Type 4+ letters..." oninput="handleClientAutocomplete(this.value)" autocomplete="off" required>
+                                            <div id="clientAutocompleteList" class="autocomplete-suggestions"></div>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Client GSTIN</label>
+                                            <input type="text" id="gstClientGstin" placeholder="27AAAAA0000A1Z5" required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>SAC / HSN Code</label>
+                                            <input type="text" id="gstSac" value="996511" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Taxable Amt (₹)</label>
+                                            <input type="number" id="gstTaxable" placeholder="50000" oninput="calculateGstTotals()" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>GST Rate (%)</label>
+                                            <select id="gstRate" onchange="calculateGstTotals()">
+                                                <option value="5">5% (CGST 2.5% + SGST 2.5%)</option>
+                                                <option value="12">12% (CGST 6% + SGST 6%)</option>
+                                                <option value="18" selected>18% (CGST 9% + SGST 9%)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Total Inv Amt (₹)</label>
+                                            <input type="text" id="gstTotalAmt" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Save GST Invoice</button>
+                                    <button type="button" class="btn-reset" onclick="document.getElementById('gstInvForm').reset(); setGstDate(); document.getElementById('gstTotalAmt').value='';">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">GST Invoices Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editGstInvoice()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteGstInvoice()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Inv No.</th>
+                                        <th>Date</th>
+                                        <th>Client Name</th>
+                                        <th>GSTIN</th>
+                                        <th>Taxable (₹)</th>
+                                        <th>GST Rate</th>
+                                        <th>Total Amt (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_gst_inv"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 3.6 RECEIVE PAYMENT RECEIPT ENTRY MODULE -->
+                <div id="module_pay_receipt" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Receive Payment Receipt Entry Module</legend>
+                        <div class="center-form-container">
+                            <form id="payReceiptForm" onsubmit="savePayReceipt(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Receipt No.</label>
+                                            <input type="text" id="rcptNo" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Receipt Date</label>
+                                            <input type="date" id="rcptDate" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Client Name</label>
+                                            <input type="text" id="rcptClient" placeholder="Awarpur Cement Works" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Against Invoice</label>
+                                            <select id="rcptInvSelect" onchange="populateInvoiceDetails()" required>
+                                                <option value="">-- Select Invoice --</option>
+                                            </select>
+                                            <input type="hidden" id="rcptInvNo">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Gross Bill Amt (₹)</label>
+                                            <input type="number" id="rcptGrossAmt" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>GST Deduction (₹)</label>
+                                            <input type="number" id="rcptGstDed" value="0" oninput="calculateNetReceived()" required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>TDS Deduction (₹)</label>
+                                            <input type="number" id="rcptTds" value="0" oninput="calculateNetReceived()" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Material Handling (₹)</label>
+                                            <input type="number" id="rcptMatHandling" value="0" oninput="calculateNetReceived()" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Other Deductions (₹)</label>
+                                            <input type="number" id="rcptOtherDed" value="0" oninput="calculateNetReceived()" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Payment Mode</label>
+                                            <select id="rcptMode" required>
+                                                <option value="HDFC SmartHub Vyapar">HDFC SmartHub Vyapar</option>
+                                                <option value="HDFC MyBusiness A/c">HDFC MyBusiness A/c</option>
+                                                <option value="SBI Current A/c">SBI Current A/c</option>
+                                                <option value="NEFT / RTGS">NEFT / RTGS</option>
+                                                <option value="Cheque">Cheque</option>
+                                                <option value="Cash">Cash</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Reference / UTR No.</label>
+                                            <input type="text" id="rcptRef" placeholder="UTR / Cheque No..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Net Received (₹)</label>
+                                            <input type="text" id="rcptAmt" readonly style="background:#e0e0e0; font-weight:bold; color:#000080;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Remarks / Notes</label>
+                                            <input type="text" id="rcptRemarks" placeholder="Freight settlement received...">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Save & Post Receipt</button>
+                                    <button type="button" class="btn-reset" onclick="resetPayReceiptForm()">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Received Payments Receipts Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editPayReceipt()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deletePayReceipt()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Receipt No.</th>
+                                        <th>Date</th>
+                                        <th>Client Name</th>
+                                        <th>Invoice Ref</th>
+                                        <th>Gross (₹)</th>
+                                        <th>Deductions (₹)</th>
+                                        <th>Mode / Bank</th>
+                                        <th>UTR / Ref</th>
+                                        <th>Net Received (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_pay_receipt"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 3.7 PARTY PAYMENT LEDGER MODULE -->
+                <div id="module_party_ledger" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Party Payment Ledger & Outstanding Summary</legend>
+                        <div class="center-form-container" style="align-items: flex-start; padding: 10px;">
+                            <div style="width: 100%; font-size: 11px;">
+                                <div class="form-row" style="margin-bottom: 12px;">
+                                    <label style="width: 130px;">Select Party / Client:</label>
+                                    <select id="ledgerPartySelect" style="max-width: 250px;" onchange="generatePartyLedger()">
+                                        <option value="">-- All Parties --</option>
+                                    </select>
+                                    <button type="button" class="btn-save" onclick="generatePartyLedger()" style="margin-left: 10px; width: auto; padding: 4px 15px;">View Ledger</button>
+                                </div>
+
+                                <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 12px;">
+                                    <div class="metric-card">
+                                        <div class="metric-title">Total Invoiced (Debit)</div>
+                                        <div class="metric-value" id="ledgerTotalInv">₹0.00</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-title">Total Received (Credit)</div>
+                                        <div class="metric-value" id="ledgerTotalRec">₹0.00</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-title">Net Balance Outstanding</div>
+                                        <div class="metric-value" id="ledgerNetBal" style="color: #b30000;">₹0.00</div>
+                                    </div>
+                                </div>
+
+                                <div class="data-table-container" style="margin-top: 10px; max-height: 240px;">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Ref / Inv / Receipt No.</th>
+                                                <th>Party Name</th>
+                                                <th>Particulars / Description</th>
+                                                <th>Invoiced (Dr) (₹)</th>
+                                                <th>Received (Cr) (₹)</th>
+                                                <th>Running Balance (₹)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbl_party_ledger">
+                                            <tr><td colspan="7">Select a party or view all to load ledger transactions.</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 3.8 CLEAR & PENDING OUTSTANDING MODULE -->
+                <div id="module_clear_outstanding" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Clear & Pending Outstandings Control</legend>
+                        <div class="center-form-container" style="align-items: flex-start; padding: 10px;">
+                            <div style="width: 100%; font-size: 11px;">
+                                <div class="form-row" style="margin-bottom: 12px;">
+                                    <label style="width: 130px;">Filter Client / Party:</label>
+                                    <select id="outstPartySelect" style="max-width: 250px;" onchange="loadOutstandingInvoices()">
+                                        <option value="">-- All Clients with Dues --</option>
+                                    </select>
+                                    <button type="button" class="btn-save" onclick="loadOutstandingInvoices()" style="margin-left: 10px; width: auto; padding: 4px 15px;">Refresh Dues</button>
+                                </div>
+
+                                <div class="data-table-container" style="margin-top: 10px; max-height: 220px;">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAllOutst" onclick="toggleAllOutst(this)"></th>
+                                                <th>Inv No.</th>
+                                                <th>Date</th>
+                                                <th>Client Name</th>
+                                                <th>GSTIN</th>
+                                                <th>Total Inv Amt (₹)</th>
+                                                <th>Received / Settled (₹)</th>
+                                                <th>Pending Balance (₹)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbl_pending_outst">
+                                            <tr><td colspan="8">No pending outstandings found.</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div style="margin-top: 15px; background: #fff; border: 1px solid #7f9db9; padding: 10px;">
+                                    <p style="font-weight: bold; margin-bottom: 6px; color: #000080;">Quick Settlement Action for Selected Invoices:</p>
+                                    <div class="form-grid-centered">
+                                        <div>
+                                            <div class="form-row">
+                                                <label>Payment Mode</label>
+                                                <select id="outstPayMode">
+                                                    <option value="HDFC SmartHub Vyapar">HDFC SmartHub Vyapar</option>
+                                                    <option value="HDFC MyBusiness A/c">HDFC MyBusiness A/c</option>
+                                                    <option value="SBI Current A/c">SBI Current A/c</option>
+                                                    <option value="NEFT / RTGS">NEFT / RTGS</option>
+                                                    <option value="Cheque">Cheque</option>
+                                                    <option value="Cash">Cash</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-row">
+                                                <label>UTR / Ref No.</label>
+                                                <input type="text" id="outstRefNo" placeholder="Enter UTR / Ref..." required>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="form-row">
+                                                <label>Remarks</label>
+                                                <input type="text" id="outstRemarks" placeholder="Bulk clearance / settlement...">
+                                            </div>
+                                            <div class="action-row" style="margin-top: 5px; justify-content: flex-start;">
+                                                <button type="button" class="btn-save" onclick="clearSelectedOutstandings()" style="background: #00ff80;">Clear Selected Dues</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 4. VOUCHERS / EXPENSES MODULE -->
+                <div id="module_voucher" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Vouchers / Expenses Entry</legend>
+                        <div class="center-form-container">
+                            <form id="vouForm" onsubmit="saveVoucher(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Voucher ID</label>
+                                            <input type="text" id="vouchId" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Expense Head</label>
+                                            <select id="vHead">
+                                                <option value="Staff Salary / Advance">Staff Salary / Advance</option>
+                                                <option value="Diesel / Fuel">Diesel / Fuel</option>
+                                                <option value="Maintenance / Repairs">Maintenance / Repairs</option>
+                                                <option value="Driver Allowance">Driver Allowance</option>
+                                                <option value="Toll / Permit">Toll / Permit</option>
+                                                <option value="Office Expenses">Office Expenses</option>
+                                                <option value="Office Stationery">Office Stationery</option>
+                                                <option value="Electricity & Water Bill">Electricity & Water Bill</option>
+                                                <option value="Internet & Telephone">Internet & Telephone</option>
+                                                <option value="Tea & Refreshment">Tea & Refreshment</option>
+                                                <option value="Office Rent">Office Rent</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Amount (₹)</label>
+                                            <input type="number" id="vAmt" placeholder="5000" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Remarks / Name</label>
+                                            <input type="text" id="vRem" placeholder="Staff Advance - Ramesh Kumar" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Save Voucher</button>
+                                    <button type="button" class="btn-reset" onclick="document.getElementById('vouForm').reset(); updateVoucherId();">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Vouchers Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editVoucher()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteVoucher()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Voucher ID</th>
+                                        <th>Expense Head</th>
+                                        <th>Amount (₹)</th>
+                                        <th>Remarks / Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_voucher"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 5. DEBIT / CREDIT VOUCHERS MODULE -->
+                <div id="module_voucher_dc" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Debit / Credit Voucher Entry</legend>
+                        <div class="center-form-container">
+                            <form id="dcVouForm" onsubmit="saveDcVoucher(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Voucher No.</label>
+                                            <input type="text" id="dcId" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Date</label>
+                                            <input type="date" id="dcDate" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Voucher Type</label>
+                                            <select id="dcType" required>
+                                                <option value="Debit Voucher (Dr)">Debit Voucher (Dr)</option>
+                                                <option value="Credit Voucher (Cr)">Credit Voucher (Cr)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Account / Party</label>
+                                            <input type="text" id="dcParty" placeholder="Awarpur Cement / Supplier Name..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Amount (₹)</label>
+                                            <input type="number" id="dcAmt" placeholder="10000" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Narration</label>
+                                            <input type="text" id="dcNarration" placeholder="Being amount paid/received towards..." required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Save Voucher</button>
+                                    <button type="button" class="btn-reset" onclick="document.getElementById('dcVouForm').reset(); setDcDate(); updateDcId();">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Debit / Credit Vouchers Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editDcVoucher()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteDcVoucher()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Voucher No.</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Party Name</th>
+                                        <th>Amount (₹)</th>
+                                        <th>Narration</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_voucher_dc"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 6. DAILY ATTENDANCE MODULE -->
+                <div id="module_attendance" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Daily Attendance Entry</legend>
+                        <div class="center-form-container">
+                            <form id="attForm" onsubmit="saveAttendance(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Select Staff</label>
+                                            <select id="attStaff" onchange="autoFillAttRole()"></select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Designation</label>
+                                            <input type="text" id="attDesig" readonly style="background:#e0e0e0;">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Date</label>
+                                            <input type="date" id="attDate" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Status</label>
+                                            <select id="attStatus">
+                                                <option value="Present">Present</option>
+                                                <option value="Absent">Absent</option>
+                                                <option value="Half Day">Half Day</option>
+                                                <option value="On Duty / Trip">On Duty / Trip</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Save Attendance</button>
+                                    <button type="button" class="btn-reset" onclick="document.getElementById('attForm').reset(); setCurrentDate();">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Daily Attendance Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editAttendance()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteAttendance()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Staff Name</th>
+                                        <th>Designation</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_attendance"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 7. SALARY PAY SHEET MODULE -->
+                <div id="module_salary" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Salary Pay Sheet Generation</legend>
+                        <div class="center-form-container">
+                            <form id="salForm" onsubmit="saveSalary(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Select Staff</label>
+                                            <select id="salStaff" onchange="autoFillStaffRole()"></select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Designation</label>
+                                            <input type="text" id="salDesig" readonly style="background:#e0e0e0;">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Basic Salary (₹)</label>
+                                            <input type="number" id="salBasic" placeholder="25000" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Month / Year</label>
+                                            <input type="text" id="salMonth" value="August 2026" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="button" class="btn-save" onclick="calculateAutomaticSalary()" style="background: #ffcc00;">Auto-Calculate Salary</button>
+                                    <button type="submit" class="btn-save">Generate Pay Sheet</button>
+                                    <button type="button" class="btn-reset" onclick="document.getElementById('salForm').reset()">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Salary Pay Sheet Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editSalary()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteSalary()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Staff Name</th>
+                                        <th>Designation</th>
+                                        <th>Basic Salary (₹)</th>
+                                        <th>Month / Year</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_salary"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 8. DAY BOOK MODULE -->
+                <div id="module_daybook" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Day Book Entry (HDFC & SBI)</legend>
+                        <div class="center-form-container">
+                            <form id="dayBookForm" onsubmit="saveDayBook(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Entry ID</label>
+                                            <input type="text" id="dbId" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Date</label>
+                                            <input type="date" id="dbDate" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Account / Bank</label>
+                                            <select id="dbAccount" required>
+                                                <option value="HDFC SmartHub Vyapar">HDFC SmartHub Vyapar</option>
+                                                <option value="HDFC MyBusiness A/c">HDFC MyBusiness A/c</option>
+                                                <option value="SBI Current A/c">SBI Current A/c</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Type</label>
+                                            <select id="dbType" required>
+                                                <option value="Receipt (Cr)">Receipt (Cr)</option>
+                                                <option value="Payment (Dr)">Payment (Dr)</option>
+                                                <option value="Contra / Transfer">Contra / Transfer</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Amount (₹)</label>
+                                            <input type="number" id="dbAmt" placeholder="10000" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Particulars</label>
+                                            <input type="text" id="dbParticulars" placeholder="Staff advance payment / Freight..." required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Save Entry</button>
+                                    <button type="button" class="btn-reset" onclick="document.getElementById('dayBookForm').reset(); setDayBookDate(); updateDayBookId();">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Day Book Transactions Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editDayBook()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteDayBook()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Entry ID</th>
+                                        <th>Date</th>
+                                        <th>Account / Bank</th>
+                                        <th>Type</th>
+                                        <th>Amount (₹)</th>
+                                        <th>Particulars</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_daybook"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 9. BANK STATEMENT UPLOAD MODULE -->
+                <div id="module_statement" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Bank Statement Upload & Import</legend>
+                        <div class="center-form-container">
+                            <form id="stmtForm" onsubmit="saveStatement(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Statement ID</label>
+                                            <input type="text" id="stmtId" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Select Bank</label>
+                                            <select id="stmtBank" required>
+                                                <option value="HDFC SmartHub Vyapar">HDFC SmartHub Vyapar</option>
+                                                <option value="HDFC MyBusiness A/c">HDFC MyBusiness A/c</option>
+                                                <option value="SBI Current A/c">SBI Current A/c</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Statement Period</label>
+                                            <input type="text" id="stmtPeriod" placeholder="August 2026" required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Upload File</label>
+                                            <input type="file" id="stmtFile" accept=".pdf,.csv,.xlsx,.xls" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Opening Bal (₹)</label>
+                                            <input type="number" id="stmtOpenBal" placeholder="100000" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Closing Bal (₹)</label>
+                                            <input type="number" id="stmtCloseBal" placeholder="250000" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Upload & Process</button>
+                                    <button type="button" class="btn-reset" onclick="document.getElementById('stmtForm').reset(); updateStmtId();">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Uploaded Statements Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editStatement()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteStatement()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>Statement ID</th>
+                                        <th>Bank Name</th>
+                                        <th>Period</th>
+                                        <th>File Name</th>
+                                        <th>Opening Bal (₹)</th>
+                                        <th>Closing Bal (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_statement"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 10. BRS MODULE -->
+                <div id="module_brs" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Bank Reconciliation Statement (BRS)</legend>
+                        <div class="center-form-container">
+                            <form id="brsForm" onsubmit="saveBrs(event)" style="width: 100%;">
+                                <div class="form-grid-centered">
+                                    <div>
+                                        <div class="form-row">
+                                            <label>BRS ID</label>
+                                            <input type="text" id="brsId" readonly style="background:#e0e0e0; font-weight:bold;">
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Select Bank</label>
+                                            <select id="brsBank" required>
+                                                <option value="HDFC SmartHub Vyapar">HDFC SmartHub Vyapar</option>
+                                                <option value="HDFC MyBusiness A/c">HDFC MyBusiness A/c</option>
+                                                <option value="SBI Current A/c">SBI Current A/c</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>As on Date</label>
+                                            <input type="date" id="brsDate" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Book Balance (₹)</label>
+                                            <input type="number" id="brsBookBal" placeholder="100000" required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-row">
+                                            <label>Recon Particulars</label>
+                                            <input type="text" id="brsPart" placeholder="Cheque issued but not presented..." required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Difference Type</label>
+                                            <select id="brsType" required>
+                                                <option value="Add (Unpresented / Credit Interest)">Add (Unpresented / Credit Interest)</option>
+                                                <option value="Less (Uncollected / Bank Charges)">Less (Uncollected / Bank Charges)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Amount (₹)</label>
+                                            <input type="number" id="brsAmt" placeholder="15000" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>Bank Balance (₹)</label>
+                                            <input type="number" id="brsBankBal" placeholder="85000" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="action-row">
+                                    <button type="submit" class="btn-save">Save BRS</button>
+                                    <button type="button" class="btn-reset" onclick="document.getElementById('brsForm').reset(); setBrsDate(); updateBrsId();">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Bank Reconciliation Records Database</legend>
+                        <div class="db-actions">
+                            <button type="button" class="btn-edit" onclick="editBrs()">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteBrs()">Delete</button>
+                        </div>
+                        <div class="data-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">Sel</th>
+                                        <th>BRS ID</th>
+                                        <th>Bank Name</th>
+                                        <th>Date</th>
+                                        <th>Book Bal (₹)</th>
+                                        <th>Particulars</th>
+                                        <th>Difference Type</th>
+                                        <th>Amount (₹)</th>
+                                        <th>Bank Bal (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_brs"></tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 11. AUDIT REPORT MODULE -->
+                <div id="module_audit" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Internal Audit & Verification Report</legend>
+                        <div class="center-form-container" style="align-items: flex-start; padding: 10px;">
+                            <div style="width: 100%; font-size: 11px;">
+                                <p style="margin-bottom: 8px;"><b>Audited Entity:</b> Anushka Freight Carriers, Chandrapur</p>
+                                <p style="margin-bottom: 8px;"><b>Compliance Status:</b> Verified against HDFC/SBI Day Books and Staff Advances.</p>
+                                
+                                <div class="form-row" style="margin-top: 10px;">
+                                    <label style="width: 150px;">Select Audit Period:</label>
+                                    <select id="auditPeriod" style="max-width: 200px;">
+                                        <option value="August 2026">August 2026 (Current)</option>
+                                        <option value="FY 2025-26">FY 2025-26</option>
+                                    </select>
+                                    <button type="button" class="btn-save" onclick="generateAuditReport()" style="margin-left: 10px; width: auto; padding: 4px 15px;">Run Audit Check</button>
+                                </div>
+
+                                <div class="data-table-container" style="margin-top: 15px; max-height: 200px;">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Audit Head / Parameter</th>
+                                                <th>Recorded Count / Value</th>
+                                                <th>Status / Variance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbl_audit_results">
+                                            <tr>
+                                                <td class="text-left">Total Freight Revenue Logged</td>
+                                                <td class="amount" id="auditRev">₹0.00</td>
+                                                <td style="color: green; font-weight: bold;">Verified</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-left">Total Operational Expenses (Vouchers)</td>
+                                                <td class="amount" id="auditExp">₹0.00</td>
+                                                <td style="color: green; font-weight: bold;">Verified</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-left">Bank Reconciliation (BRS Discrepancies)</td>
+                                                <td id="auditBrs">0 Pending</td>
+                                                <td style="color: green; font-weight: bold;">Matched</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- 12. AUTO BACKUP & RESTORE MODULE -->
+                <div id="module_backup" class="workspace-panel">
+                    <fieldset class="win-fieldset">
+                        <legend class="win-legend">Auto Backup & Data Restore</legend>
+                        <div class="center-form-container">
+                            <div style="width: 100%; padding: 10px; font-size: 11px;">
+                                <p style="margin-bottom: 10px;"><b>Auto Backup Status:</b> Active (Data is automatically saved to browser local storage on every change).</p>
+                                <div class="form-row">
+                                    <label>Manual JSON Backup</label>
+                                    <button type="button" class="btn-save" onclick="downloadBackup()" style="width:auto; padding: 4px 15px;">Download Backup (.json)</button>
+                                </div>
+                                <div class="form-row" style="margin-top: 15px;">
+                                    <label>Restore Backup</label>
+                                    <input type="file" id="restoreFile" accept=".json" style="flex:1; margin-right: 10px;">
+                                    <button type="button" class="btn-reset" onclick="restoreBackup()" style="width:auto; padding: 4px 15px; background:#ff9999;">Restore Data</button>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let db = JSON.parse(localStorage.getItem('ANUSHKA_ERP_FULL_DB_HDFC_SBI_STMT')) || {
+        staff: [
+            { id: 'EMP-001', name: 'RAMESH KUMAR', gender: 'Male', desig: 'Operations Head', dept: 'HR / Office', city: 'CHANDRAPUR', country: 'India' }
+        ],
+        client: [
+            { id: 'PARTY-001', name: 'AWARPUR CEMENT WORKS', gstin: '27AAAAA0000A1Z5', pan: 'AAAAA0000A', contactPerson: 'Mr. Sharma', phone: '9823012345', address: 'Industrial Area, Awarpur', city: 'CHANDRAPUR', creditDays: '30 Days', creditLimit: '500000' }
+        ],
+        vehicle: [
+            { vNo: 'MH-34-AB-1234', vType: '40 MT Trailer', vCap: '40', vChassis: 'CHAS987654', vEngine: 'ENG123456', vOwnerName: 'RAMESH KUMAR', vOwnerAddress: 'Chandrapur', vOwnerContact: '9823012345', vOwnerIdNo: 'PAN-XXXX', vDriverName: 'SURESH KUMAR', vDriverDl: 'MH3420190001', vDriverInfo: 'Chandrapur - 9823011111', vBrokerInfo: 'Direct', vStatus: 'Active' }
+        ],
+        trip: [
+            { tId: 'TRIP-001', tDate: '2026-08-08', tVeh: 'MH-34-AB-1234', tRoute: 'Nagpur to Chandrapur', tMaterial: '4500KW HT Motor', tClient: 'AWARPUR CEMENT WORKS', tFreight: '125000', tAdvance: '25000', tBalance: '100000' }
+        ],
+        gst_inv: [
+            { gstInvNo: 'GST-INV-001', gstInvDate: '2026-08-08', gstClient: 'AWARPUR CEMENT WORKS', gstClientGstin: '27AAAAA0000A1Z5', gstSac: '996511', gstTaxable: '125000', gstRate: '18', gstTotalAmt: '147500.00' }
+        ],
+        pay_receipt: [
+            { rcptNo: 'REC-001', rcptDate: '2026-08-09', rcptClient: 'AWARPUR CEMENT WORKS', rcptInvNo: 'GST-INV-001', rcptGross: '131250', rcptGstDed: '0', rcptTds: '2812', rcptMatHandling: '0', rcptOtherDed: '0', rcptMode: 'HDFC SmartHub Vyapar', rcptAmt: '128438', rcptRef: 'UTR409281920', rcptRemarks: 'Full settlement received' }
+        ],
+        voucher: [
+            { vouchId: 'VOU-001', vHead: 'Staff Salary / Advance', vAmt: '5000', vRem: 'Staff Advance - Ramesh Kumar' }
+        ],
+        voucher_dc: [
+            { dcId: 'DC-VOU-001', dcDate: '2026-08-08', dcType: 'Credit Voucher (Cr)', dcParty: 'AWARPUR CEMENT WORKS', dcAmt: '125000', dcNarration: 'Freight advance received via HDFC' }
+        ],
+        attendance: [
+            { name: 'RAMESH KUMAR', desig: 'Operations Head', date: '2026-08-08', status: 'Present' }
+        ],
+        salary: [
+            { name: 'RAMESH KUMAR', desig: 'Operations Head', basic: '35000', month: 'August 2026' }
+        ],
+        daybook: [
+            { dbId: 'DB-001', dbDate: '2026-08-08', dbAccount: 'HDFC SmartHub Vyapar', dbType: 'Receipt (Cr)', dbAmt: '125000', dbParticulars: 'Client Settlement - Awarpur Cement' }
+        ],
+        statement: [
+            { stmtId: 'STMT-001', stmtBank: 'HDFC SmartHub Vyapar', stmtPeriod: 'August 2026', fileName: 'HDFC_Aug2026_Statement.pdf', stmtOpenBal: '200000', stmtCloseBal: '325000' }
+        ],
+        brs: [
+            { brsId: 'BRS-001', brsBank: 'HDFC SmartHub Vyapar', brsDate: '2026-08-08', brsBookBal: '250000', brsPart: 'Cheque issued but not presented', brsType: 'Add (Unpresented / Credit Interest)', brsAmt: '25000', brsBankBal: '275000' }
+        ],
+        audit: []
+    };
+
+    function handleLogin(event) {
+        event.preventDefault();
+        let user = document.getElementById('loginUser').value.trim();
+        let pass = document.getElementById('loginPass').value.trim();
+        let errBox = document.getElementById('loginError');
+
+        if(user.toUpperCase() === 'RAMESH KUMAR' && pass.length > 0) {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('mainDashboard').style.display = 'block';
+
+            updateEmpId();
+            updateClientId();
+            updateTripId();
+            updateReceiptNo();
+            updateVoucherId();
+            updateDcId();
+            updateDayBookId();
+            updateStmtId();
+            updateBrsId();
+            setCurrentDate();
+            setTripDate();
+            setGstDate();
+            setReceiptDate();
+            setDcDate();
+            setDayBookDate();
+            setBrsDate();
+            populateStaffDropdowns();
+            populateInvoiceDropdowns();
+            populatePartyLedgerDropdowns();
+            populateOutstandingDropdowns();
+            renderAllTables();
+            updateMetrics();
+            generateAuditReport();
+            generatePartyLedger();
+            loadOutstandingInvoices();
+        } else {
+            errBox.style.display = 'block';
+        }
+    }
+
+    function setCurrentDate() {
+        let today = new Date().toISOString().split('T')[0];
+        let dateField = document.getElementById('attDate');
+        if(dateField) dateField.value = today;
+    }
+
+    function setTripDate() {
+        let today = new Date().toISOString().split('T')[0];
+        let dateField = document.getElementById('tDate');
+        if(dateField) dateField.value = today;
+    }
+
+    function setGstDate() {
+        let today = new Date().toISOString().split('T')[0];
+        let dateField = document.getElementById('gstInvDate');
+        if(dateField) dateField.value = today;
+    }
+
+    function setReceiptDate() {
+        let today = new Date().toISOString().split('T')[0];
+        let dateField = document.getElementById('rcptDate');
+        if(dateField) dateField.value = today;
+    }
+
+    function setDcDate() {
+        let today = new Date().toISOString().split('T')[0];
+        let dateField = document.getElementById('dcDate');
+        if(dateField) dateField.value = today;
+    }
+
+    function setDayBookDate() {
+        let today = new Date().toISOString().split('T')[0];
+        let dateField = document.getElementById('dbDate');
+        if(dateField) dateField.value = today;
+    }
+
+    function setBrsDate() {
+        let today = new Date().toISOString().split('T')[0];
+        let dateField = document.getElementById('brsDate');
+        if(dateField) dateField.value = today;
+    }
+
+    function switchModule(modName, event) {
+        if(event) event.preventDefault();
+        document.querySelectorAll('.workspace-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.win-link-btn').forEach(b => b.classList.remove('active'));
+
+        document.getElementById('module_' + modName).classList.add('active');
+        document.getElementById('lnk_' + modName).classList.add('active');
+        if(modName === 'pay_receipt') {
+            populateInvoiceDropdowns();
+        }
+        if(modName === 'party_ledger') {
+            populatePartyLedgerDropdowns();
+            generatePartyLedger();
+        }
+        if(modName === 'clear_outstanding') {
+            populateOutstandingDropdowns();
+            loadOutstandingInvoices();
+        }
+        if(modName === 'audit') {
+            generateAuditReport();
+        }
+    }
+
+    function saveDataToStorage() {
+        localStorage.setItem('ANUSHKA_ERP_FULL_DB_HDFC_SBI_STMT', JSON.stringify(db));
+        renderAllTables();
+        updateMetrics();
+    }
+
+    function downloadBackup() {
+        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+        let downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "AnushkaFreightCarriers_Backup_" + new Date().toISOString().split('T')[0] + ".json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    function restoreBackup() {
+        let fileInput = document.getElementById('restoreFile');
+        if(fileInput.files.length === 0) {
+            alert('Please select a backup JSON file to restore.');
+            return;
+        }
+        let file = fileInput.files[0];
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let parsedData = JSON.parse(e.target.result);
+                if(parsedData && parsedData.staff && parsedData.vehicle) {
+                    db = parsedData;
+                    saveDataToStorage();
+                    alert('Data restored successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Invalid backup file structure.');
+                }
+            } catch(err) {
+                alert('Error parsing JSON file.');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function updateMetrics() {
+        document.getElementById('lblStaffCount').innerText = db.staff.length;
+        document.getElementById('lblFleetCount').innerText = db.vehicle.filter(v => v.vStatus === 'Active' || v.vStatus === 'On Trip').length;
+        
+        let totalF = db.trip.reduce((sum, item) => sum + parseFloat(item.tFreight || 0), 0);
+        let totalE = db.voucher.reduce((sum, item) => sum + parseFloat(item.vAmt || 0), 0);
+
+        document.getElementById('lblTotalFreight').innerText = '₹' + totalF.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('lblTotalExpenses').innerText = '₹' + totalE.toLocaleString('en-IN', {minimumFractionDigits: 2});
+    }
+
+    function renderAllTables() {
+        let tbStaff = document.getElementById('tbl_staff');
+        tbStaff.innerHTML = db.staff.length === 0 ? `<tr><td colspan="7">No records found.</td></tr>` : '';
+        db.staff.forEach((st, idx) => {
+            tbStaff.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-staff" data-index="${idx}"></td>
+                <td style="font-weight:bold;">${st.id}</td>
+                <td class="text-left">${st.name}</td>
+                <td>${st.gender}</td>
+                <td class="text-left">${st.desig}</td>
+                <td>${st.dept}</td>
+                <td class="text-left">${st.city}</td>
+            </tr>`;
+        });
+
+        let tbClient = document.getElementById('tbl_client');
+        if(tbClient) {
+            if(!db.client) db.client = [];
+            tbClient.innerHTML = db.client.length === 0 ? `<tr><td colspan="8">No client parties found.</td></tr>` : '';
+            db.client.forEach((c, idx) => {
+                tbClient.innerHTML += `<tr>
+                    <td><input type="checkbox" class="chk-client" data-index="${idx}"></td>
+                    <td style="font-weight:bold;">${c.id}</td>
+                    <td class="text-left">${c.name}</td>
+                    <td>${c.gstin}</td>
+                    <td class="text-left">${c.contactPerson || '-'}</td>
+                    <td>${c.phone || '-'}</td>
+                    <td class="text-left">${c.city}</td>
+                    <td>${c.creditDays}</td>
+                </tr>`;
+            });
+        }
+
+        let tbVeh = document.getElementById('tbl_vehicle');
+        tbVeh.innerHTML = db.vehicle.length === 0 ? `<tr><td colspan="9">No vehicles found.</td></tr>` : '';
+        db.vehicle.forEach((v, idx) => {
+            tbVeh.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-veh" data-index="${idx}"></td>
+                <td style="font-weight:bold;">${v.vNo}</td>
+                <td class="text-left">${v.vType}</td>
+                <td>${v.vCap} MT</td>
+                <td class="text-left">Ch: ${v.vChassis || '-'}<br>Eng: ${v.vEngine || '-'}</td>
+                <td class="text-left">${v.vOwnerName || '-'}<br>${v.vOwnerContact || '-'}</td>
+                <td class="text-left">${v.vDriverName || '-'}<br>DL: ${v.vDriverDl || '-'}</td>
+                <td class="text-left">${v.vBrokerInfo || '-'}</td>
+                <td>${v.vStatus}</td>
+            </tr>`;
+        });
+
+        let tbTrip = document.getElementById('tbl_trip');
+        tbTrip.innerHTML = db.trip.length === 0 ? `<tr><td colspan="10">No trips logged.</td></tr>` : '';
+        db.trip.forEach((t, idx) => {
+            tbTrip.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-trip" data-index="${idx}"></td>
+                <td style="font-weight:bold;">${t.tId}</td>
+                <td>${t.tDate || '-'}</td>
+                <td><b>${t.tVeh}</b></td>
+                <td class="text-left">${t.tRoute}</td>
+                <td class="text-left">${t.tMaterial}</td>
+                <td class="text-left">${t.tClient}</td>
+                <td class="amount">₹${parseFloat(t.tFreight || 0).toLocaleString('en-IN')}</td>
+                <td class="amount" style="color: blue;">₹${parseFloat(t.tAdvance || 0).toLocaleString('en-IN')}</td>
+                <td class="amount" style="color: #b30000;">₹${parseFloat(t.tBalance || 0).toLocaleString('en-IN')}</td>
+            </tr>`;
+        });
+
+        let tbGst = document.getElementById('tbl_gst_inv');
+        if(tbGst) {
+            tbGst.innerHTML = (!db.gst_inv || db.gst_inv.length === 0) ? `<tr><td colspan="8">No GST invoices found.</td></tr>` : '';
+            if(db.gst_inv) {
+                db.gst_inv.forEach((g, idx) => {
+                    tbGst.innerHTML += `<tr>
+                        <td><input type="checkbox" class="chk-gst" data-index="${idx}"></td>
+                        <td style="font-weight:bold;">${g.gstInvNo}</td>
+                        <td>${g.gstInvDate}</td>
+                        <td class="text-left">${g.gstClient}</td>
+                        <td>${g.gstClientGstin}</td>
+                        <td class="amount">₹${parseFloat(g.gstTaxable).toLocaleString('en-IN')}</td>
+                        <td>${g.gstRate}%</td>
+                        <td class="amount">₹${parseFloat(g.gstTotalAmt).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                    </tr>`;
+                });
+            }
+        }
+
+        let tbRcpt = document.getElementById('tbl_pay_receipt');
+        if(tbRcpt) {
+            tbRcpt.innerHTML = (!db.pay_receipt || db.pay_receipt.length === 0) ? `<tr><td colspan="10">No payment receipts found.</td></tr>` : '';
+            if(db.pay_receipt) {
+                db.pay_receipt.forEach((r, idx) => {
+                    let totalDed = parseFloat(r.rcptGstDed || 0) + parseFloat(r.rcptTds || 0) + parseFloat(r.rcptMatHandling || 0) + parseFloat(r.rcptOtherDed || 0);
+                    tbRcpt.innerHTML += `<tr>
+                        <td><input type="checkbox" class="chk-rcpt" data-index="${idx}"></td>
+                        <td style="font-weight:bold;">${r.rcptNo}</td>
+                        <td>${r.rcptDate}</td>
+                        <td class="text-left">${r.rcptClient}</td>
+                        <td>${r.rcptInvNo}</td>
+                        <td class="amount">₹${parseFloat(r.rcptGross || r.rcptAmt).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                        <td class="amount" style="color: red;">₹${totalDed.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                        <td>${r.rcptMode}</td>
+                        <td class="text-left">${r.rcptRef}</td>
+                        <td class="amount">₹${parseFloat(r.rcptAmt).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                    </tr>`;
+                });
+            }
+        }
+
+        let tbVou = document.getElementById('tbl_voucher');
+        tbVou.innerHTML = db.voucher.length === 0 ? `<tr><td colspan="5">No vouchers recorded.</td></tr>` : '';
+        db.voucher.forEach((vo, idx) => {
+            tbVou.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-vou" data-index="${idx}"></td>
+                <td style="font-weight:bold;">${vo.vouchId}</td>
+                <td class="text-left">${vo.vHead}</td>
+                <td class="amount">₹${parseFloat(vo.vAmt).toLocaleString('en-IN')}</td>
+                <td class="text-left">${vo.vRem}</td>
+            </tr>`;
+        });
+
+        let tbDc = document.getElementById('tbl_voucher_dc');
+        tbDc.innerHTML = db.voucher_dc.length === 0 ? `<tr><td colspan="7">No debit/credit vouchers found.</td></tr>` : '';
+        db.voucher_dc.forEach((d, idx) => {
+            tbDc.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-dc" data-index="${idx}"></td>
+                <td style="font-weight:bold;">${d.dcId}</td>
+                <td>${d.dcDate}</td>
+                <td><b>${d.dcType}</b></td>
+                <td class="text-left">${d.dcParty}</td>
+                <td class="amount">₹${parseFloat(d.dcAmt).toLocaleString('en-IN')}</td>
+                <td class="text-left">${d.dcNarration}</td>
+            </tr>`;
+        });
+
+        let tbAtt = document.getElementById('tbl_attendance');
+        tbAtt.innerHTML = db.attendance.length === 0 ? `<tr><td colspan="5">No attendance records found.</td></tr>` : '';
+        db.attendance.forEach((at, idx) => {
+            tbAtt.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-att" data-index="${idx}"></td>
+                <td class="text-left" style="font-weight:bold;">${at.name}</td>
+                <td class="text-left">${at.desig}</td>
+                <td>${at.date}</td>
+                <td><b>${at.status}</b></td>
+            </tr>`;
+        });
+
+        let tbSal = document.getElementById('tbl_salary');
+        tbSal.innerHTML = db.salary.length === 0 ? `<tr><td colspan="5">No salary sheets generated.</td></tr>` : '';
+        db.salary.forEach((s, idx) => {
+            tbSal.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-sal" data-index="${idx}"></td>
+                <td class="text-left" style="font-weight:bold;">${s.name}</td>
+                <td class="text-left">${s.desig}</td>
+                <td class="amount">₹${parseFloat(s.basic).toLocaleString('en-IN')}</td>
+                <td>${s.month}</td>
+            </tr>`;
+        });
+
+        let tbDb = document.getElementById('tbl_daybook');
+        tbDb.innerHTML = db.daybook.length === 0 ? `<tr><td colspan="7">No day book entries found.</td></tr>` : '';
+        db.daybook.forEach((d, idx) => {
+            tbDb.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-daybook" data-index="${idx}"></td>
+                <td style="font-weight:bold;">${d.dbId}</td>
+                <td>${d.dbDate}</td>
+                <td class="text-left"><b>${d.dbAccount}</b></td>
+                <td>${d.dbType}</td>
+                <td class="amount">₹${parseFloat(d.dbAmt).toLocaleString('en-IN')}</td>
+                <td class="text-left">${d.dbParticulars}</td>
+            </tr>`;
+        });
+
+        let tbStmt = document.getElementById('tbl_statement');
+        tbStmt.innerHTML = db.statement.length === 0 ? `<tr><td colspan="7">No bank statements uploaded.</td></tr>` : '';
+        db.statement.forEach((st, idx) => {
+            tbStmt.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-stmt" data-index="${idx}"></td>
+                <td style="font-weight:bold;">${st.stmtId}</td>
+                <td class="text-left"><b>${st.stmtBank}</b></td>
+                <td>${st.stmtPeriod}</td>
+                <td class="text-left">${st.fileName}</td>
+                <td class="amount">₹${parseFloat(st.stmtOpenBal).toLocaleString('en-IN')}</td>
+                <td class="amount">₹${parseFloat(st.stmtCloseBal).toLocaleString('en-IN')}</td>
+            </tr>`;
+        });
+
+        let tbBrs = document.getElementById('tbl_brs');
+        tbBrs.innerHTML = db.brs.length === 0 ? `<tr><td colspan="9">No BRS records found.</td></tr>` : '';
+        db.brs.forEach((b, idx) => {
+            tbBrs.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-brs" data-index="${idx}"></td>
+                <td style="font-weight:bold;">${b.brsId}</td>
+                <td class="text-left"><b>${b.brsBank}</b></td>
+                <td>${b.brsDate}</td>
+                <td class="amount">₹${parseFloat(b.brsBookBal).toLocaleString('en-IN')}</td>
+                <td class="text-left">${b.brsPart}</td>
+                <td>${b.brsType}</td>
+                <td class="amount">₹${parseFloat(b.brsAmt).toLocaleString('en-IN')}</td>
+                <td class="amount">₹${parseFloat(b.brsBankBal).toLocaleString('en-IN')}</td>
+            </tr>`;
+        });
+
+        populateStaffDropdowns();
+        populateInvoiceDropdowns();
+        populatePartyLedgerDropdowns();
+        populateOutstandingDropdowns();
+        loadOutstandingInvoices();
+    }
+
+    // Vehicle Autocomplete for Trip Log (5+ letters)
+    function handleVehicleAutocomplete(val) {
+        let listContainer = document.getElementById('vehAutocompleteList');
+        if(!listContainer) return;
+        
+        val = val.trim();
+        if(val.length < 5) {
+            listContainer.style.display = 'none';
+            listContainer.innerHTML = '';
+            return;
+        }
+
+        let matchedVehicles = [];
+        if(db.vehicle) {
+            matchedVehicles = db.vehicle.filter(v => v.vNo.toLowerCase().includes(val.toLowerCase()));
+        }
+
+        if(matchedVehicles.length > 0) {
+            listContainer.innerHTML = '';
+            matchedVehicles.forEach(v => {
+                let div = document.createElement('div');
+                div.className = 'autocomplete-suggestion';
+                div.innerHTML = `<b>${v.vNo}</b> (${v.vType} - ${v.vCap}MT)`;
+                div.onclick = function() {
+                    document.getElementById('tVeh').value = v.vNo;
+                    listContainer.style.display = 'none';
+                    listContainer.innerHTML = '';
+                };
+                listContainer.appendChild(div);
+            });
+            listContainer.style.display = 'block';
+        } else {
+            listContainer.style.display = 'none';
+            listContainer.innerHTML = '';
+        }
+    }
+
+    // Client Autocomplete for Trip Log (5+ letters)
+    function handleTripClientAutocomplete(val) {
+        let listContainer = document.getElementById('tripClientAutocompleteList');
+        if(!listContainer) return;
+        
+        val = val.trim();
+        if(val.length < 5) {
+            listContainer.style.display = 'none';
+            listContainer.innerHTML = '';
+            return;
+        }
+
+        let matchedClients = [];
+        if(db.client) {
+            matchedClients = db.client.filter(c => c.name.toLowerCase().includes(val.toLowerCase()));
+        }
+
+        if(matchedClients.length > 0) {
+            listContainer.innerHTML = '';
+            matchedClients.forEach(c => {
+                let div = document.createElement('div');
+                div.className = 'autocomplete-suggestion';
+                div.innerHTML = `<b>${c.name}</b> (${c.gstin})`;
+                div.onclick = function() {
+                    document.getElementById('tClient').value = c.name;
+                    listContainer.style.display = 'none';
+                    listContainer.innerHTML = '';
+                };
+                listContainer.appendChild(div);
+            });
+            listContainer.style.display = 'block';
+        } else {
+            listContainer.style.display = 'none';
+            listContainer.innerHTML = '';
+        }
+    }
+
+    // Calculate Trip Balance automatically
+    function calculateTripBalance() {
+        let freight = parseFloat(document.getElementById('tFreight').value) || 0;
+        let advance = parseFloat(document.getElementById('tAdvance').value) || 0;
+        let balance = freight - advance;
+        document.getElementById('tBalance').value = balance.toFixed(2);
+    }
+
+    function populatePartyLedgerDropdowns() {
+        let ledgerSel = document.getElementById('ledgerPartySelect');
+        if(ledgerSel) {
+            let currentVal = ledgerSel.value;
+            ledgerSel.innerHTML = '<option value="">-- All Parties --</option>';
+            if(db.client) {
+                db.client.forEach(c => {
+                    ledgerSel.innerHTML += `<option value="${c.name}">${c.name} (${c.id})</option>`;
+                });
+            }
+            ledgerSel.value = currentVal;
+        }
+    }
+
+    function populateOutstandingDropdowns() {
+        let outstSel = document.getElementById('outstPartySelect');
+        if(outstSel) {
+            let currentVal = outstSel.value;
+            outstSel.innerHTML = '<option value="">-- All Clients with Dues --</option>';
+            if(db.client) {
+                db.client.forEach(c => {
+                    outstSel.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+                });
+            }
+            outstSel.value = currentVal;
+        }
+    }
+
+    function loadOutstandingInvoices() {
+        let selectedParty = document.getElementById('outstPartySelect').value;
+        let outstTbl = document.getElementById('tbl_pending_outst');
+        if(!outstTbl) return;
+
+        let invoiceMap = {};
+
+        if(db.gst_inv) {
+            db.gst_inv.forEach(inv => {
+                if(!selectedParty || inv.gstClient === selectedParty) {
+                    invoiceMap[inv.gstInvNo] = {
+                        invNo: inv.gstInvNo,
+                        date: inv.gstInvDate,
+                        client: inv.gstClient,
+                        gstin: inv.gstClientGstin,
+                        totalAmt: parseFloat(inv.gstTotalAmt) || 0,
+                        paidAmt: 0
+                    };
+                }
+            });
+        }
+
+        if(db.pay_receipt) {
+            db.pay_receipt.forEach(rcpt => {
+                if(invoiceMap[rcpt.rcptInvNo]) {
+                    invoiceMap[rcpt.rcptInvNo].paidAmt += parseFloat(rcpt.rcptAmt) || 0;
+                }
+            });
+        }
+
+        let pendingList = [];
+        Object.values(invoiceMap).forEach(item => {
+            let pending = item.totalAmt - item.paidAmt;
+            if(pending > 1.0) {
+                item.pendingAmt = pending;
+                pendingList.push(item);
+            }
+        });
+
+        outstTbl.innerHTML = pendingList.length === 0 ? `<tr><td colspan="8">All invoice accounts are fully cleared or no pending dues found.</td></tr>` : '';
+
+        pendingList.forEach((item, idx) => {
+            outstTbl.innerHTML += `<tr>
+                <td><input type="checkbox" class="chk-outst" data-inv="${item.invNo}" data-client="${item.client}" data-pending="${item.pendingAmt}"></td>
+                <td style="font-weight:bold;">${item.invNo}</td>
+                <td>${item.date}</td>
+                <td class="text-left">${item.client}</td>
+                <td>${item.gstin}</td>
+                <td class="amount">₹${item.totalAmt.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                <td class="amount" style="color: green;">₹${item.paidAmt.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                <td class="amount" style="color: #b30000;">₹${item.pendingAmt.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+            </tr>`;
+        });
+    }
+
+    function toggleAllOutst(masterCheckbox) {
+        let checkboxes = document.querySelectorAll('.chk-outst');
+        checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+    }
+
+    function clearSelectedOutstandings() {
+        let selected = document.querySelectorAll('.chk-outst:checked');
+        if(selected.length === 0) {
+            alert('Please select at least one pending invoice to clear.');
+            return;
+        }
+
+        let mode = document.getElementById('outstPayMode').value;
+        let refNo = document.getElementById('outstRefNo').value.trim();
+        let remarks = document.getElementById('outstRemarks').value.trim() || 'Outstanding dues cleared via bulk clearance';
+
+        if(!refNo) {
+            alert('Please enter a reference/UTR number for payment clearance.');
+            return;
+        }
+
+        let today = new Date().toISOString().split('T')[0];
+
+        selected.forEach(cb => {
+            let invNo = cb.dataset.inv;
+            let client = cb.dataset.client;
+            let pendingAmt = parseFloat(cb.dataset.pending);
+
+            if(!db.pay_receipt) db.pay_receipt = [];
+            
+            db.pay_receipt.push({
+                rcptNo: 'REC-' + String(db.pay_receipt.length + 1).padStart(3, '0'),
+                rcptDate: today,
+                rcptClient: client,
+                rcptInvNo: invNo,
+                rcptGross: pendingAmt.toFixed(2),
+                rcptGstDed: '0',
+                rcptTds: '0',
+                rcptMatHandling: '0',
+                rcptOtherDed: '0',
+                rcptMode: mode,
+                rcptAmt: pendingAmt.toFixed(2),
+                rcptRef: refNo.toUpperCase(),
+                rcptRemarks: remarks
+            });
+        });
+
+        saveDataToStorage();
+        document.getElementById('outstRefNo').value = '';
+        document.getElementById('outstRemarks').value = '';
+        document.getElementById('selectAllOutst').checked = false;
+        loadOutstandingInvoices();
+        generatePartyLedger();
+        alert('Selected outstanding dues successfully cleared and recorded into payment receipts!');
+    }
+
+    function generatePartyLedger() {
+        let selectedParty = document.getElementById('ledgerPartySelect').value;
+        let ledgerTbl = document.getElementById('tbl_party_ledger');
+        if(!ledgerTbl) return;
+
+        let transactions = [];
+
+        if(db.gst_inv) {
+            db.gst_inv.forEach(inv => {
+                if(!selectedParty || inv.gstClient === selectedParty) {
+                    transactions.push({
+                        date: inv.gstInvDate,
+                        ref: inv.gstInvNo,
+                        party: inv.gstClient,
+                        particulars: `GST Invoice Raised (SAC: ${inv.gstSac})`,
+                        dr: parseFloat(inv.gstTotalAmt) || 0,
+                        cr: 0
+                    });
+                }
+            });
+        }
+
+        if(db.pay_receipt) {
+            db.pay_receipt.forEach(rcpt => {
+                if(!selectedParty || rcpt.rcptClient === selectedParty) {
+                    transactions.push({
+                        date: rcpt.rcptDate,
+                        ref: rcpt.rcptNo,
+                        party: rcpt.rcptClient,
+                        particulars: `Payment Received via ${rcpt.rcptMode} (Ref: ${rcpt.rcptRef})`,
+                        dr: 0,
+                        cr: parseFloat(rcpt.rcptAmt) || 0
+                    });
+                }
+            });
+        }
+
+        if(db.voucher_dc) {
+            db.voucher_dc.forEach(dc => {
+                if(!selectedParty || dc.dcParty === selectedParty) {
+                    let isDr = dc.dcType.includes('Debit');
+                    transactions.push({
+                        date: dc.dcDate,
+                        ref: dc.dcId,
+                        party: dc.dcParty,
+                        particulars: `DC Voucher: ${dc.dcNarration}`,
+                        dr: isDr ? (parseFloat(dc.dcAmt) || 0) : 0,
+                        cr: !isDr ? (parseFloat(dc.dcAmt) || 0) : 0
+                    });
+                }
+            });
+        }
+
+        transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        ledgerTbl.innerHTML = transactions.length === 0 ? `<tr><td colspan="7">No ledger transactions found for the selected criteria.</td></tr>` : '';
+
+        let totalDr = 0;
+        let totalCr = 0;
+        let runningBal = 0;
+
+        transactions.forEach(tx => {
+            totalDr += tx.dr;
+            totalCr += tx.cr;
+            runningBal = runningBal + tx.dr - tx.cr;
+
+            ledgerTbl.innerHTML += `<tr>
+                <td>${tx.date}</td>
+                <td style="font-weight:bold;">${tx.ref}</td>
+                <td class="text-left">${tx.party}</td>
+                <td class="text-left">${tx.particulars}</td>
+                <td class="amount">${tx.dr > 0 ? '₹' + tx.dr.toLocaleString('en-IN', {minimumFractionDigits: 2}) : '-'}</td>
+                <td class="amount" style="color: green;">${tx.cr > 0 ? '₹' + tx.cr.toLocaleString('en-IN', {minimumFractionDigits: 2}) : '-'}</td>
+                <td class="amount" style="color: ${runningBal >= 0 ? '#b30000' : 'green'};">₹${runningBal.toLocaleString('en-IN', {minimumFractionDigits: 2})} ${runningBal >= 0 ? 'Dr' : 'Cr'}</td>
+            </tr>`;
+        });
+
+        document.getElementById('ledgerTotalInv').innerText = '₹' + totalDr.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('ledgerTotalRec').innerText = '₹' + totalCr.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('ledgerNetBal').innerText = '₹' + Math.abs(runningBal).toLocaleString('en-IN', {minimumFractionDigits: 2}) + (runningBal >= 0 ? ' Dr' : ' Cr');
+    }
+
+    function updateEmpId() {
+        let el = document.getElementById('empId');
+        if(el) el.value = 'EMP-' + String(db.staff.length + 1).padStart(3, '0');
+    }
+    function saveEmployee(e) {
+        e.preventDefault();
+        db.staff.push({
+            id: document.getElementById('empId').value,
+            name: document.getElementById('empName').value.toUpperCase(),
+            gender: document.querySelector('input[name="gender"]:checked').value,
+            desig: document.getElementById('designation').value,
+            dept: document.getElementById('department').value,
+            city: document.getElementById('city').value.toUpperCase(),
+            country: document.getElementById('country').value
+        });
+        saveDataToStorage();
+        document.getElementById('empForm').reset();
+        updateEmpId();
+    }
+    function editStaff() {
+        let selected = document.querySelectorAll('.chk-staff:checked');
+        if(selected.length !== 1) { alert('Please select exactly one record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let st = db.staff[idx];
+        document.getElementById('empId').value = st.id;
+        document.getElementById('empName').value = st.name;
+        document.querySelector(`input[name="gender"][value="${st.gender}"]`).checked = true;
+        document.getElementById('designation').value = st.desig;
+        document.getElementById('department').value = st.dept;
+        document.getElementById('city').value = st.city;
+        document.getElementById('country').value = st.country;
+        db.staff.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteStaff() {
+        let selected = document.querySelectorAll('.chk-staff:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.staff.splice(i, 1));
+        saveDataToStorage();
+        updateEmpId();
+    }
+
+    function updateClientId() {
+        let el = document.getElementById('clientId');
+        if(el) {
+            if(!db.client) db.client = [];
+            el.value = 'PARTY-' + String(db.client.length + 1).padStart(3, '0');
+        }
+    }
+    function resetClientForm() {
+        document.getElementById('clientForm').reset();
+        updateClientId();
+    }
+    function saveClient(e) {
+        e.preventDefault();
+        if(!db.client) db.client = [];
+        db.client.push({
+            id: document.getElementById('clientId').value,
+            name: document.getElementById('clientName').value.toUpperCase(),
+            gstin: document.getElementById('clientGstin').value.toUpperCase(),
+            pan: document.getElementById('clientPan').value.toUpperCase(),
+            contactPerson: document.getElementById('clientContactPerson').value,
+            phone: document.getElementById('clientPhone').value,
+            address: document.getElementById('clientAddress').value,
+            city: document.getElementById('clientCity').value.toUpperCase(),
+            creditDays: document.getElementById('clientCreditDays').value,
+            creditLimit: document.getElementById('clientCreditLimit').value
+        });
+        saveDataToStorage();
+        resetClientForm();
+    }
+    function editClient() {
+        let selected = document.querySelectorAll('.chk-client:checked');
+        if(selected.length !== 1) { alert('Please select exactly one client party record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let c = db.client[idx];
+        document.getElementById('clientId').value = c.id;
+        document.getElementById('clientName').value = c.name;
+        document.getElementById('clientGstin').value = c.gstin;
+        document.getElementById('clientPan').value = c.pan || '';
+        document.getElementById('clientContactPerson').value = c.contactPerson || '';
+        document.getElementById('clientPhone').value = c.phone || '';
+        document.getElementById('clientAddress').value = c.address || '';
+        document.getElementById('clientCity').value = c.city;
+        document.getElementById('clientCreditDays').value = c.creditDays;
+        document.getElementById('clientCreditLimit').value = c.creditLimit;
+        db.client.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteClient() {
+        let selected = document.querySelectorAll('.chk-client:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.client.splice(i, 1));
+        saveDataToStorage();
+        updateClientId();
+    }
+
+    function saveVehicle(e) {
+        e.preventDefault();
+        db.vehicle.push({
+            vNo: document.getElementById('vNo').value.toUpperCase(),
+            vType: document.getElementById('vType').value,
+            vCap: document.getElementById('vCap').value,
+            vChassis: document.getElementById('vChassis').value.toUpperCase(),
+            vEngine: document.getElementById('vEngine').value.toUpperCase(),
+            vOwnerName: document.getElementById('vOwnerName').value.toUpperCase(),
+            vOwnerAddress: document.getElementById('vOwnerAddress').value,
+            vOwnerContact: document.getElementById('vOwnerContact').value,
+            vOwnerIdNo: document.getElementById('vOwnerIdNo').value.toUpperCase(),
+            vDriverName: document.getElementById('vDriverName').value.toUpperCase(),
+            vDriverDl: document.getElementById('vDriverDl').value.toUpperCase(),
+            vDriverInfo: document.getElementById('vDriverInfo').value,
+            vBrokerInfo: document.getElementById('vBrokerInfo').value,
+            vStatus: document.getElementById('vStatus').value
+        });
+        saveDataToStorage();
+        document.getElementById('vehForm').reset();
+    }
+    function editVehicle() {
+        let selected = document.querySelectorAll('.chk-veh:checked');
+        if(selected.length !== 1) { alert('Please select exactly one record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let v = db.vehicle[idx];
+        document.getElementById('vNo').value = v.vNo;
+        document.getElementById('vType').value = v.vType;
+        document.getElementById('vCap').value = v.vCap;
+        document.getElementById('vChassis').value = v.vChassis || '';
+        document.getElementById('vEngine').value = v.vEngine || '';
+        document.getElementById('vOwnerName').value = v.vOwnerName || '';
+        document.getElementById('vOwnerAddress').value = v.vOwnerAddress || '';
+        document.getElementById('vOwnerContact').value = v.vOwnerContact || '';
+        document.getElementById('vOwnerIdNo').value = v.vOwnerIdNo || '';
+        document.getElementById('vDriverName').value = v.vDriverName || '';
+        document.getElementById('vDriverDl').value = v.vDriverDl || '';
+        document.getElementById('vDriverInfo').value = v.vDriverInfo || '';
+        document.getElementById('vBrokerInfo').value = v.vBrokerInfo || '';
+        document.getElementById('vStatus').value = v.vStatus;
+        db.vehicle.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteVehicle() {
+        let selected = document.querySelectorAll('.chk-veh:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.vehicle.splice(i, 1));
+        saveDataToStorage();
+    }
+
+    function updateTripId() {
+        let el = document.getElementById('tId');
+        if(el) el.value = 'TRIP-' + String(db.trip.length + 1).padStart(3, '0');
+    }
+    function resetTripForm() {
+        document.getElementById('tripForm').reset();
+        setTripDate();
+        updateTripId();
+        document.getElementById('tBalance').value = '';
+    }
+    function saveTrip(e) {
+        e.preventDefault();
+        db.trip.push({
+            tId: document.getElementById('tId').value,
+            tDate: document.getElementById('tDate').value,
+            tVeh: document.getElementById('tVeh').value.toUpperCase(),
+            tRoute: document.getElementById('tRoute').value,
+            tMaterial: document.getElementById('tMaterial').value,
+            tClient: document.getElementById('tClient').value.toUpperCase(),
+            tFreight: document.getElementById('tFreight').value,
+            tAdvance: document.getElementById('tAdvance').value || '0',
+            tBalance: document.getElementById('tBalance').value || document.getElementById('tFreight').value
+        });
+        saveDataToStorage();
+        resetTripForm();
+    }
+    function editTrip() {
+        let selected = document.querySelectorAll('.chk-trip:checked');
+        if(selected.length !== 1) { alert('Please select exactly one record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let t = db.trip[idx];
+        document.getElementById('tId').value = t.tId;
+        document.getElementById('tDate').value = t.tDate;
+        document.getElementById('tVeh').value = t.tVeh;
+        document.getElementById('tRoute').value = t.tRoute;
+        document.getElementById('tMaterial').value = t.tMaterial;
+        document.getElementById('tClient').value = t.tClient;
+        document.getElementById('tFreight').value = t.tFreight;
+        document.getElementById('tAdvance').value = t.tAdvance;
+        document.getElementById('tBalance').value = t.tBalance;
+        db.trip.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteTrip() {
+        let selected = document.querySelectorAll('.chk-trip:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.trip.splice(i, 1));
+        saveDataToStorage();
+        updateTripId();
+    }
+
+    // GST Invoice Module Functions (Updated for Manual Invoice Number Entry)
+    function handleClientAutocomplete(val) {
+        let listContainer = document.getElementById('clientAutocompleteList');
+        if(!listContainer) return;
+        
+        val = val.trim();
+        if(val.length < 4) {
+            listContainer.style.display = 'none';
+            listContainer.innerHTML = '';
+            return;
+        }
+
+        let matchedClients = [];
+        if(db.client) {
+            matchedClients = db.client.filter(c => c.name.toLowerCase().includes(val.toLowerCase()));
+        }
+
+        if(matchedClients.length > 0) {
+            listContainer.innerHTML = '';
+            matchedClients.forEach(c => {
+                let div = document.createElement('div');
+                div.className = 'autocomplete-suggestion';
+                div.innerHTML = `<b>${c.name}</b> (${c.gstin})`;
+                div.onclick = function() {
+                    document.getElementById('gstClient').value = c.name;
+                    document.getElementById('gstClientGstin').value = c.gstin;
+                    listContainer.style.display = 'none';
+                    listContainer.innerHTML = '';
+                };
+                listContainer.appendChild(div);
+            });
+            listContainer.style.display = 'block';
+        } else {
+            listContainer.style.display = 'none';
+            listContainer.innerHTML = '';
+        }
+    }
+
+    function calculateGstTotals() {
+        let taxable = parseFloat(document.getElementById('gstTaxable').value) || 0;
+        let rate = parseFloat(document.getElementById('gstRate').value) || 18;
+        let total = taxable + (taxable * rate / 100);
+        document.getElementById('gstTotalAmt').value = total.toFixed(2);
+    }
+
+    function saveGstInvoice(e) {
+        e.preventDefault();
+        let invNo = document.getElementById('gstInvNo').value.trim().toUpperCase();
+        if(!invNo) {
+            alert('Please enter a valid Invoice Number.');
+            return;
+        }
+
+        if(!db.gst_inv) db.gst_inv = [];
+        
+        // Check duplicate invoice number
+        let exists = db.gst_inv.some(g => g.gstInvNo === invNo);
+        if(exists) {
+            alert('Invoice Number already exists in database. Please use a unique invoice number.');
+            return;
+        }
+
+        db.gst_inv.push({
+            gstInvNo: invNo,
+            gstInvDate: document.getElementById('gstInvDate').value,
+            gstClient: document.getElementById('gstClient').value.toUpperCase(),
+            gstClientGstin: document.getElementById('gstClientGstin').value.toUpperCase(),
+            gstSac: document.getElementById('gstSac').value,
+            gstTaxable: document.getElementById('gstTaxable').value,
+            gstRate: document.getElementById('gstRate').value,
+            gstTotalAmt: document.getElementById('gstTotalAmt').value
+        });
+        saveDataToStorage();
+        document.getElementById('gstInvForm').reset();
+        setGstDate();
+        document.getElementById('gstTotalAmt').value = '';
+    }
+
+    function editGstInvoice() {
+        let selected = document.querySelectorAll('.chk-gst:checked');
+        if(selected.length !== 1) { alert('Please select exactly one GST invoice record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let g = db.gst_inv[idx];
+        document.getElementById('gstInvNo').value = g.gstInvNo;
+        document.getElementById('gstInvDate').value = g.gstInvDate;
+        document.getElementById('gstClient').value = g.gstClient;
+        document.getElementById('gstClientGstin').value = g.gstClientGstin;
+        document.getElementById('gstSac').value = g.gstSac;
+        document.getElementById('gstTaxable').value = g.gstTaxable;
+        document.getElementById('gstRate').value = g.gstRate;
+        document.getElementById('gstTotalAmt').value = g.gstTotalAmt;
+        db.gst_inv.splice(idx, 1);
+        saveDataToStorage();
+    }
+
+    function deleteGstInvoice() {
+        let selected = document.querySelectorAll('.chk-gst:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.gst_inv.splice(i, 1));
+        saveDataToStorage();
+    }
+
+    // Receive Payment Receipt Functions
+    function updateReceiptNo() {
+        let el = document.getElementById('rcptNo');
+        if(el) {
+            if(!db.pay_receipt) db.pay_receipt = [];
+            el.value = 'REC-' + String(db.pay_receipt.length + 1).padStart(3, '0');
+        }
+    }
+
+    function populateInvoiceDropdowns() {
+        let invSelect = document.getElementById('rcptInvSelect');
+        if(invSelect) {
+            let currentVal = invSelect.value;
+            invSelect.innerHTML = '<option value="">-- Select Invoice --</option>';
+            if(db.gst_inv) {
+                db.gst_inv.forEach(inv => {
+                    invSelect.innerHTML += `<option value="${inv.gstInvNo}">${inv.gstInvNo} | ${inv.gstClient} | ₹${inv.gstTotalAmt}</option>`;
+                });
+            }
+            invSelect.value = currentVal;
+        }
+    }
+
+    function populateInvoiceDetails() {
+        let invNo = document.getElementById('rcptInvSelect').value;
+        document.getElementById('rcptInvNo').value = invNo;
+        if(!invNo) {
+            document.getElementById('rcptClient').value = '';
+            document.getElementById('rcptGrossAmt').value = '';
+            document.getElementById('rcptAmt').value = '';
+            return;
+        }
+
+        let inv = db.gst_inv.find(g => g.gstInvNo === invNo);
+        if(inv) {
+            document.getElementById('rcptClient').value = inv.gstClient;
+            document.getElementById('rcptGrossAmt').value = inv.gstTotalAmt;
+            calculateNetReceived();
+        }
+    }
+
+    function calculateNetReceived() {
+        let gross = parseFloat(document.getElementById('rcptGrossAmt').value) || 0;
+        let gstDed = parseFloat(document.getElementById('rcptGstDed').value) || 0;
+        let tds = parseFloat(document.getElementById('rcptTds').value) || 0;
+        let matHandling = parseFloat(document.getElementById('rcptMatHandling').value) || 0;
+        let otherDed = parseFloat(document.getElementById('rcptOtherDed').value) || 0;
+
+        let net = gross - (gstDed + tds + matHandling + otherDed);
+        document.getElementById('rcptAmt').value = net.toFixed(2);
+    }
+
+    function resetPayReceiptForm() {
+        document.getElementById('payReceiptForm').reset();
+        setReceiptDate();
+        updateReceiptNo();
+        document.getElementById('rcptGrossAmt').value = '';
+        document.getElementById('rcptAmt').value = '';
+    }
+
+    function savePayReceipt(e) {
+        e.preventDefault();
+        if(!db.pay_receipt) db.pay_receipt = [];
+        db.pay_receipt.push({
+            rcptNo: document.getElementById('rcptNo').value,
+            rcptDate: document.getElementById('rcptDate').value,
+            rcptClient: document.getElementById('rcptClient').value.toUpperCase(),
+            rcptInvNo: document.getElementById('rcptInvNo').value,
+            rcptGross: document.getElementById('rcptGrossAmt').value,
+            rcptGstDed: document.getElementById('rcptGstDed').value || '0',
+            rcptTds: document.getElementById('rcptTds').value || '0',
+            rcptMatHandling: document.getElementById('rcptMatHandling').value || '0',
+            rcptOtherDed: document.getElementById('rcptOtherDed').value || '0',
+            rcptMode: document.getElementById('rcptMode').value,
+            rcptAmt: document.getElementById('rcptAmt').value,
+            rcptRef: document.getElementById('rcptRef').value.toUpperCase(),
+            rcptRemarks: document.getElementById('rcptRemarks').value
+        });
+        saveDataToStorage();
+        resetPayReceiptForm();
+    }
+
+    function editPayReceipt() {
+        let selected = document.querySelectorAll('.chk-rcpt:checked');
+        if(selected.length !== 1) { alert('Please select exactly one payment receipt record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let r = db.pay_receipt[idx];
+        document.getElementById('rcptNo').value = r.rcptNo;
+        document.getElementById('rcptDate').value = r.rcptDate;
+        document.getElementById('rcptClient').value = r.rcptClient;
+        document.getElementById('rcptInvSelect').value = r.rcptInvNo;
+        document.getElementById('rcptInvNo').value = r.rcptInvNo;
+        document.getElementById('rcptGrossAmt').value = r.rcptGross || r.rcptAmt;
+        document.getElementById('rcptGstDed').value = r.rcptGstDed || '0';
+        document.getElementById('rcptTds').value = r.rcptTds || '0';
+        document.getElementById('rcptMatHandling').value = r.rcptMatHandling || '0';
+        document.getElementById('rcptOtherDed').value = r.rcptOtherDed || '0';
+        document.getElementById('rcptMode').value = r.rcptMode;
+        document.getElementById('rcptAmt').value = r.rcptAmt;
+        document.getElementById('rcptRef').value = r.rcptRef;
+        document.getElementById('rcptRemarks').value = r.rcptRemarks || '';
+        db.pay_receipt.splice(idx, 1);
+        saveDataToStorage();
+    }
+
+    function deletePayReceipt() {
+        let selected = document.querySelectorAll('.chk-rcpt:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.pay_receipt.splice(i, 1));
+        saveDataToStorage();
+        updateReceiptNo();
+    }
+
+    function updateVoucherId() {
+        let el = document.getElementById('vouchId');
+        if(el) el.value = 'VOU-' + String(db.voucher.length + 1).padStart(3, '0');
+    }
+    function saveVoucher(e) {
+        e.preventDefault();
+        db.voucher.push({
+            vouchId: document.getElementById('vouchId').value,
+            vHead: document.getElementById('vHead').value,
+            vAmt: document.getElementById('vAmt').value,
+            vRem: document.getElementById('vRem').value
+        });
+        saveDataToStorage();
+        document.getElementById('vouForm').reset();
+        updateVoucherId();
+    }
+    function editVoucher() {
+        let selected = document.querySelectorAll('.chk-vou:checked');
+        if(selected.length !== 1) { alert('Please select exactly one record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let vo = db.voucher[idx];
+        document.getElementById('vouchId').value = vo.vouchId;
+        document.getElementById('vHead').value = vo.vHead;
+        document.getElementById('vAmt').value = vo.vAmt;
+        document.getElementById('vRem').value = vo.vRem;
+        db.voucher.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteVoucher() {
+        let selected = document.querySelectorAll('.chk-vou:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.voucher.splice(i, 1));
+        saveDataToStorage();
+        updateVoucherId();
+    }
+
+    function updateDcId() {
+        let el = document.getElementById('dcId');
+        if(el) el.value = 'DC-VOU-' + String(db.voucher_dc.length + 1).padStart(3, '0');
+    }
+    function saveDcVoucher(e) {
+        e.preventDefault();
+        db.voucher_dc.push({
+            dcId: document.getElementById('dcId').value,
+            dcDate: document.getElementById('dcDate').value,
+            dcType: document.getElementById('dcType').value,
+            dcParty: document.getElementById('dcParty').value.toUpperCase(),
+            dcAmt: document.getElementById('dcAmt').value,
+            dcNarration: document.getElementById('dcNarration').value
+        });
+        saveDataToStorage();
+        document.getElementById('dcVouForm').reset();
+        setDcDate();
+        updateDcId();
+    }
+    function editDcVoucher() {
+        let selected = document.querySelectorAll('.chk-dc:checked');
+        if(selected.length !== 1) { alert('Please select exactly one record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let d = db.voucher_dc[idx];
+        document.getElementById('dcId').value = d.dcId;
+        document.getElementById('dcDate').value = d.dcDate;
+        document.getElementById('dcType').value = d.dcType;
+        document.getElementById('dcParty').value = d.dcParty;
+        document.getElementById('dcAmt').value = d.dcAmt;
+        document.getElementById('dcNarration').value = d.dcNarration;
+        db.voucher_dc.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteDcVoucher() {
+        let selected = document.querySelectorAll('.chk-dc:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.voucher_dc.splice(i, 1));
+        saveDataToStorage();
+        updateDcId();
+    }
+
+    function populateStaffDropdowns() {
+        let attSel = document.getElementById('attStaff');
+        let salSel = document.getElementById('salStaff');
+        if(attSel && salSel) {
+            let attVal = attSel.value;
+            let salVal = salSel.value;
+            attSel.innerHTML = '';
+            salSel.innerHTML = '';
+            db.staff.forEach(st => {
+                attSel.innerHTML += `<option value="${st.name}">${st.name} (${st.desig})</option>`;
+                salSel.innerHTML += `<option value="${st.name}">${st.name} (${st.desig})</option>`;
+            });
+            attSel.value = attVal;
+            salSel.value = salVal;
+            autoFillAttRole();
+            autoFillStaffRole();
+        }
+    }
+
+    function autoFillAttRole() {
+        let name = document.getElementById('attStaff').value;
+        let st = db.staff.find(s => s.name === name);
+        if(st) document.getElementById('attDesig').value = st.desig;
+    }
+
+    function autoFillStaffRole() {
+        let name = document.getElementById('salStaff').value;
+        let st = db.staff.find(s => s.name === name);
+        if(st) document.getElementById('salDesig').value = st.desig;
+    }
+
+    function saveAttendance(e) {
+        e.preventDefault();
+        db.attendance.push({
+            name: document.getElementById('attStaff').value,
+            desig: document.getElementById('attDesig').value,
+            date: document.getElementById('attDate').value,
+            status: document.getElementById('attStatus').value
+        });
+        saveDataToStorage();
+        document.getElementById('attForm').reset();
+        setCurrentDate();
+    }
+    function editAttendance() {
+        let selected = document.querySelectorAll('.chk-att:checked');
+        if(selected.length !== 1) { alert('Please select exactly one record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let at = db.attendance[idx];
+        document.getElementById('attStaff').value = at.name;
+        document.getElementById('attDesig').value = at.desig;
+        document.getElementById('attDate').value = at.date;
+        document.getElementById('attStatus').value = at.status;
+        db.attendance.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteAttendance() {
+        let selected = document.querySelectorAll('.chk-att:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.attendance.splice(i, 1));
+        saveDataToStorage();
+    }
+
+    function calculateAutomaticSalary() {
+        let name = document.getElementById('salStaff').value;
+        let presentCount = db.attendance.filter(a => a.name === name && (a.status === 'Present' || a.status === 'On Duty / Trip')).length;
+        let calculatedBasic = presentCount * 1000;
+        if(calculatedBasic === 0) calculatedBasic = 25000;
+        document.getElementById('salBasic').value = calculatedBasic;
+        alert(`Salary auto-calculated based on attendance records: ₹${calculatedBasic}`);
+    }
+
+    function saveSalary(e) {
+        e.preventDefault();
+        db.salary.push({
+            name: document.getElementById('salStaff').value,
+            desig: document.getElementById('salDesig').value,
+            basic: document.getElementById('salBasic').value,
+            month: document.getElementById('salMonth').value
+        });
+        saveDataToStorage();
+        document.getElementById('salForm').reset();
+    }
+    function editSalary() {
+        let selected = document.querySelectorAll('.chk-sal:checked');
+        if(selected.length !== 1) { alert('Please select exactly one record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let s = db.salary[idx];
+        document.getElementById('salStaff').value = s.name;
+        document.getElementById('salDesig').value = s.desig;
+        document.getElementById('salBasic').value = s.basic;
+        document.getElementById('salMonth').value = s.month;
+        db.salary.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteSalary() {
+        let selected = document.querySelectorAll('.chk-sal:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.salary.splice(i, 1));
+        saveDataToStorage();
+    }
+
+    function updateDayBookId() {
+        let el = document.getElementById('dbId');
+        if(el) el.value = 'DB-' + String(db.daybook.length + 1).padStart(3, '0');
+    }
+    function saveDayBook(e) {
+        e.preventDefault();
+        db.daybook.push({
+            dbId: document.getElementById('dbId').value,
+            dbDate: document.getElementById('dbDate').value,
+            dbAccount: document.getElementById('dbAccount').value,
+            dbType: document.getElementById('dbType').value,
+            dbAmt: document.getElementById('dbAmt').value,
+            dbParticulars: document.getElementById('dbParticulars').value
+        });
+        saveDataToStorage();
+        document.getElementById('dayBookForm').reset();
+        setDayBookDate();
+        updateDayBookId();
+    }
+    function editDayBook() {
+        let selected = document.querySelectorAll('.chk-daybook:checked');
+        if(selected.length !== 1) { alert('Please select exactly one record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let d = db.daybook[idx];
+        document.getElementById('dbId').value = d.dbId;
+        document.getElementById('dbDate').value = d.dbDate;
+        document.getElementById('dbAccount').value = d.dbAccount;
+        document.getElementById('dbType').value = d.dbType;
+        document.getElementById('dbAmt').value = d.dbAmt;
+        document.getElementById('dbParticulars').value = d.dbParticulars;
+        db.daybook.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteDayBook() {
+        let selected = document.querySelectorAll('.chk-daybook:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.daybook.splice(i, 1));
+        saveDataToStorage();
+        updateDayBookId();
+    }
+
+    function updateStmtId() {
+        let el = document.getElementById('stmtId');
+        if(el) el.value = 'STMT-' + String(db.statement.length + 1).padStart(3, '0');
+    }
+    function saveStatement(e) {
+        e.preventDefault();
+        let fileInput = document.getElementById('stmtFile');
+        let fileName = fileInput.files.length > 0 ? fileInput.files[0].name : 'statement.pdf';
+
+        db.statement.push({
+            stmtId: document.getElementById('stmtId').value,
+            stmtBank: document.getElementById('stmtBank').value,
+            stmtPeriod: document.getElementById('stmtPeriod').value,
+            fileName: fileName,
+            stmtOpenBal: document.getElementById('stmtOpenBal').value,
+            stmtCloseBal: document.getElementById('stmtCloseBal').value
+        });
+        saveDataToStorage();
+        document.getElementById('stmtForm').reset();
+        updateStmtId();
+    }
+    function editStatement() {
+        let selected = document.querySelectorAll('.chk-stmt:checked');
+        if(selected.length !== 1) { alert('Please select exactly one record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let st = db.statement[idx];
+        document.getElementById('stmtId').value = st.stmtId;
+        document.getElementById('stmtBank').value = st.stmtBank;
+        document.getElementById('stmtPeriod').value = st.stmtPeriod;
+        document.getElementById('stmtOpenBal').value = st.stmtOpenBal;
+        document.getElementById('stmtCloseBal').value = st.stmtCloseBal;
+        db.statement.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteStatement() {
+        let selected = document.querySelectorAll('.chk-stmt:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.statement.splice(i, 1));
+        saveDataToStorage();
+        updateStmtId();
+    }
+
+    function updateBrsId() {
+        let el = document.getElementById('brsId');
+        if(el) el.value = 'BRS-' + String(db.brs.length + 1).padStart(3, '0');
+    }
+    function saveBrs(e) {
+        e.preventDefault();
+        db.brs.push({
+            brsId: document.getElementById('brsId').value,
+            brsBank: document.getElementById('brsBank').value,
+            brsDate: document.getElementById('brsDate').value,
+            brsBookBal: document.getElementById('brsBookBal').value,
+            brsPart: document.getElementById('brsPart').value,
+            brsType: document.getElementById('brsType').value,
+            brsAmt: document.getElementById('brsAmt').value,
+            brsBankBal: document.getElementById('brsBankBal').value
+        });
+        saveDataToStorage();
+        document.getElementById('brsForm').reset();
+        setBrsDate();
+        updateBrsId();
+    }
+    function editBrs() {
+        let selected = document.querySelectorAll('.chk-brs:checked');
+        if(selected.length !== 1) { alert('Please select exactly one record to edit.'); return; }
+        let idx = selected[0].dataset.index;
+        let b = db.brs[idx];
+        document.getElementById('brsId').value = b.brsId;
+        document.getElementById('brsBank').value = b.brsBank;
+        document.getElementById('brsDate').value = b.brsDate;
+        document.getElementById('brsBookBal').value = b.brsBookBal;
+        document.getElementById('brsPart').value = b.brsPart;
+        document.getElementById('brsType').value = b.brsType;
+        document.getElementById('brsAmt').value = b.brsAmt;
+        document.getElementById('brsBankBal').value = b.brsBankBal;
+        db.brs.splice(idx, 1);
+        saveDataToStorage();
+    }
+    function deleteBrs() {
+        let selected = document.querySelectorAll('.chk-brs:checked');
+        if(selected.length === 0) { alert('Please select at least one record.'); return; }
+        let indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a,b)=>b-a);
+        indices.forEach(i => db.brs.splice(i, 1));
+        saveDataToStorage();
+        updateBrsId();
+    }
+
+    function generateAuditReport() {
+        let totalF = db.trip.reduce((sum, item) => sum + parseFloat(item.tFreight || 0), 0);
+        let totalE = db.voucher.reduce((sum, item) => sum + parseFloat(item.vAmt || 0), 0);
+        
+        let revEl = document.getElementById('auditRev');
+        let expEl = document.getElementById('auditExp');
+        let brsEl = document.getElementById('auditBrs');
+
+        if(revEl) revEl.innerText = '₹' + totalF.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        if(expEl) expEl.innerText = '₹' + totalE.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        if(brsEl) brsEl.innerText = db.brs.length + ' Records';
+    }
+</script>
+
+</body>
+</html>
+```[cite: 1]
